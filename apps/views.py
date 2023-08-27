@@ -136,9 +136,11 @@ def pages_player_details_coach(player_id):
             db.session.commit()
             return redirect('/pages/coachindex/')
         days = ['Monday', 'Wednesday', 'Friday']
-        player_workouts = {}
+        player_workouts = {day: [] for day in days}
         for day in days:
-            player_workouts[day] = player.get_upcoming_workouts()
+            workouts_for_day = player.get_workouts_for_day(day)
+            player_workouts[day] = workouts_for_day
+
         return render_template('pages/player_details_coach.html',segment='index', parent='dashboard', coach=coach, player=player,player_workouts=player_workouts,all_workouts=all_workouts)
  else:
         flash('Please log in as a coach.')
