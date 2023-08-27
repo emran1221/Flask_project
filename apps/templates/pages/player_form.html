@@ -1,0 +1,55 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Complete Your Player Profile</h5>
+            </div>
+            <div class="card-body">
+                <form action="/pages/player_form/" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ player.PlayerName }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address:</label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ player.PlayerEmail }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Position:</label>
+                        <select id="position" name="position" class="form-control" required>
+                            <option value="" disabled selected>Select Position</option>
+                            <option value="Point Guard">Point Guard</option>
+                            <option value="Shooting Guard">Shooting Guard</option>
+                            <option value="Small Forward">Small Forward</option>
+                            <option value="Power Forward">Power Forward</option>
+                            <option value="Center">Center</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="finishing">Finishing (1-10):</label>
+                        <input type="number" id="finishing" name="finishing" class="form-control" min="1" max="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shooting">Shooting (1-10):</label>
+                        <input type="number" id="shooting" name="shooting" class="form-control" min="1" max="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rebounding">Rebounding (1-10):</label>
+                        <input type="number" id="rebounding" name="rebounding" class="form-control" min="1" max="10" required>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- [ Main Content ] end -->
+
+{% endblock content %}

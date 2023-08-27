@@ -1,0 +1,178 @@
+{% extends 'layouts/base.html' %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="page-header-title">
+        <h1> {{ player.PlayerName }}! Workouts and Progress.</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border">
+            <div class="card-header">
+                <h4 class="card-title">Player Details</h4>
+            </div>
+            <div class="card-body bg-light">
+                <div class="media">
+                    <img src="https://via.placeholder.com/100" class="mr-3 rounded-circle" alt="Player Image">
+                    <div class="media-body">
+                        <h5 class="mt-0">{{ player.PlayerName }}</h5>
+                        <p class="mb-1"><strong>Email:</strong> {{ player.PlayerEmail }}</p>
+                        <p class="mb-1"><strong>Position:</strong> {{ player.Position }}</p>
+                    </div>
+                </div>
+                <hr>
+                <h6 class="mt-3 mb-2"><strong>Skills:</strong></h6>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Finishing:</strong> {{ player.Finishing }}</li>
+                    <li class="list-group-item"><strong>Shooting:</strong> {{ player.Shooting }}</li>
+                    <li class="list-group-item"><strong>Rebounding:</strong> {{ player.Rebounding }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border">
+            <div class="card-header">
+                <h4 class="card-title">{{ player.PlayerName }} Assigned Workouts</h4>
+            </div>
+            <div class="card-body bg-light">
+                {% for day, workouts in player_workouts.items() %}
+                <div class="mb-4">
+                    <h5 class="mb-3">{{ day }}:</h5>
+                    <ul class="list-group">
+                        {% for workout in workouts %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1"><strong>Exercise:</strong> {{ workout.exercise_name }}</p>
+                                    <p class="mb-1"><strong>Sets:</strong> {{ workout.sets }}</p>
+                                    <p class="mb-0"><strong>Reps:</strong> {{ workout.reps }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border">
+            <div class="card-header">
+                <h4 class="card-title">All Workout Days</h4>
+            </div>
+            <div class="card-body bg-light">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for workout in all_workouts %}
+                            <tr>
+                                <td>{{ workout.date.strftime('%A') }}</td>
+                                <td>{{ workout.date.strftime('%x') }}</td>
+                                <td>
+                                    <span class="badge {% if workout.is_done %}badge-success{% else %}badge-danger{% endif %}">
+                                        {{ "Done" if workout.is_done else "Not Done" }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-header-text">Match Statistics</h5>
+            </div>
+            <div class="card-block table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Match ID</th>
+                            <th>Assists</th>
+                            <th>Points</th>
+                            <th>Rebounds</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in player.matches %}
+                        <tr class="unread">
+                            <td><img class="rounded-circle" style="width:40px;" src="{{ url_for('static', filename='assets/images/user/avatar-2.jpg') }}" alt="activity-user"></td>
+                            <td>
+                                <h6 class="mb-1">{{ player.name }}</h6>
+                                <p class="m-0"> {{ match.match_number }}</p>
+                            </td>
+                            <td>{{ match.assists }}</td>
+                            <td>{{ match.points }}</td>
+                            <td>{{ match.rebounds }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-statistics">
+    <div class="card-block border-bottom">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <i class="fas fa-basketball-ball text-primary f-36"></i>
+            </div>
+            <div class="col">
+                <h3 class="mb-0">Average Statistics</h3>
+                <div class="mt-3">
+                    <h5 class="text-c-green">Assists: {{ player.average_assists }}</h5>
+                    <h5 class="text-c-green">Points: {{ player.average_points }}</h5>
+                    <h5 class="text-c-green">Rebounds: {{ player.average_rebounds }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('views.pages_edit_player_workouts', player_id=player.PlayerID) }}" class="btn btn-secondary">Edit Workouts</a>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <div class="page-header-title">
+                <h2>Got Any Thoughts? <i class="fas fa-comment"></i></h2>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="{{ url_for('views.pages_player_details_coach', player_id=player.PlayerID) }}">
+                    <div class="form-group">
+                        <textarea name="feedback" rows="4" class="form-control" placeholder="Share your feedback"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Feedback</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

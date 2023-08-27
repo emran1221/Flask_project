@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="container">
+    <div class="card p-4">
+        <h1 class="mb-4">Edit Workouts for {{ player.PlayerName }}</h1>
+        <form method="post">
+            {% for day, workouts in player_workouts.items() %}
+            <div class="mb-4">
+                <h2>{{ day }}:</h2>
+                <ul class="list-group workout-list">
+                    {% for workout in workouts %}
+                    <li class="list-group-item workout-item">
+                        <div class="form-group">
+                            <label for="workout_{{ workout.id }}_name">Exercise:</label>
+                            <select class="form-control" id="workout_{{ workout.id }}_name" name="workout_{{ workout.id }}_name">
+                                <option value="" selected>Select an exercise</option>
+                                {% for exercise in exercises %}
+                                <option value="{{ exercise.name }}" {% if exercise.name == workout.exercise_name %} selected {% endif %}>
+                                    {{ exercise.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" id="workout_{{ workout.id }}_link" value="{{ workout.exercise.link }}">
+                        <div class="form-row">
+                            <div class="col-md-4">
+                                <label for="workout_{{ workout.id }}_sets">Sets:</label>
+                                <input type="text" class="form-control" id="workout_{{ workout.id }}_sets" name="workout_{{ workout.id }}_sets" value="{{ workout.sets }}" placeholder="Sets">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="workout_{{ workout.id }}_reps">Reps:</label>
+                                <input type="text" class="form-control" id="workout_{{ workout.id }}_reps" name="workout_{{ workout.id }}_reps" value="{{ workout.reps }}" placeholder="Reps">
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

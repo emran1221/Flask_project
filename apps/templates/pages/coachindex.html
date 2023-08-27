@@ -1,0 +1,61 @@
+{% extends 'layouts/base.html' %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Welcome to Your Coach Dashboard</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Player Name</th>
+                                <th>Position</th>
+                                <th>Finishing</th>
+                                <th>Shooting</th>
+                                <th>Rebounding</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for player in enrolled_players %}
+                            <tr class="player-row">
+                                <td>
+                                    <div class="media align-items-center">
+                                        <img class="avatar mr-3 rounded-circle" src="{{ url_for('static', filename='assets/images/user/avatar-2.jpg') }}" alt="activity-user" width="50">
+                                        <div class="media-body">
+                                            <h5 class="mb-1">{{ player.PlayerName }}</h5>
+                                            <p class="text-muted mb-0">{{ player.PlayerEmail }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ player.Position }}</td>
+                                <td>
+                                    <div class="badge badge-pill badge-success m-1">{{ player.Finishing }}</div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-pill badge-primary m-1">{{ player.Shooting }}</div>
+                                </td>
+                                <td>
+                                    <div class="badge badge-pill badge-info m-1">{{ player.Rebounding }}</div>
+                                </td>
+                                <td class="text-left align-middle">
+                                    <a href="{{ url_for('views.pages_player_details_coach', player_id=player.PlayerID) }}" class="btn btn-primary btn-sm btn-view-details">View Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

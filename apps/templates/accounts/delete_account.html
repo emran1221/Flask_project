@@ -1,0 +1,36 @@
+{% extends 'layouts/base-auth.html' %}
+
+{% block content %}
+    <div class="auth-wrapper">
+        <div class="auth-content">
+            <div class="auth-bg">
+                <span class="r"></span>
+                <span class="r s"></span>
+                <span class="r s"></span>
+                <span class="r"></span>
+            </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="feather icon-trash-2 auth-icon"></i>
+                    </div>
+                    <h3 class="mb-4">Delete Account</h3>
+                    <form action="{{url_for('accounts.accounts_delete_account')}}" method="POST">
+                        <p class="mb-4">Are you sure you want to delete your account?</p>
+                        <button class="btn btn-danger shadow-2 mb-4" type="submit">Delete Account</button>
+                    </form>
+                    <p class="mb-2 text-muted"><a href="{{url_for('accounts.accounts_auth_signin')}}">Back to Login</a></p>
+                </div>
+                {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <ul class="flash-messages">
+                                {% for message in messages %}
+                                    <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

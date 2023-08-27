@@ -1,0 +1,80 @@
+<nav class="pcoded-navbar">
+  <div class="navbar-wrapper">
+    <div class="navbar-brand header-logo">
+      <a href="/" class="b-brand">
+        <div class="b-bg">
+          <i class="feather icon-trending-up"></i>
+        </div>
+        <span class="b-title">Myworkouts</span>
+      </a>
+      <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+    </div>
+    <div class="navbar-content scroll-div">
+      <ul class="nav pcoded-inner-navbar">
+        <li class="nav-item pcoded-menu-caption">
+          <label>Navigation</label>
+        </li>
+        <li data-username="dashboard " class="nav-item {% if 'index' in segment %}active{% endif %}">
+          <a href="/" class="nav-link ">
+            <span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span>
+          </a>
+        </li>
+        
+        
+        {% if player and not all_workouts and not exercises %}
+        <li class="nav-item pcoded-menu-caption">
+          <label>My skills</label>
+        </li>
+        <ul class="nav flex-column mt-3">
+          <li data-username="form elements advance componant validation masking wizard picker select"
+            class="nav-item {% if 'form_elements' in segment %}active{% endif %}">
+            <a href="{{url_for('views.pages_player_form')}}" class="nav-link "><span class="pcoded-micon"><i
+                  class="feather icon-file-text"></i></span><span class="pcoded-mtext">Update my skills</span></a>
+          </li>
+          <li data-username="Table bootstrap datatable footable"
+            class="nav-item {% if 'match_statistics' in segment %}active{% endif %}">
+            <a href="{{url_for('views.pages_match_statistics')}}" class="nav-link "><span class="pcoded-micon"><i
+                  class="feather icon-trending-up"></i></span><span class="pcoded-mtext">My matches Statistics</span></a>
+          </li>
+        </ul>
+      {% endif %}
+        
+       
+        <li class="nav-item pcoded-menu-caption">
+          <label>Pages</label>
+        </li>
+        <li
+          data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe"
+          class="nav-item pcoded-hasmenu">
+          <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i
+                class="feather icon-lock"></i></span><span class="pcoded-mtext">Account</span></a>
+          <ul class="pcoded-submenu">
+            <li data-username="Profile Page" class="nav-item {% if 'profile' in segment %}active{% endif %}"><a href="{{url_for('views.pages_profile')}}" class="nav-link"><span
+              class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile
+              Page</span></a>
+        </li>
+        <li data-username="change password" class="nav-item {% if 'auth_change_password' in segment %}active{% endif %}">
+          <a href="{{url_for('accounts.accounts_auth_change_password')}}" class="nav-link">
+              <span class="pcoded-micon"><i class="feather icon-unlock"></i></span>
+              <span class="pcoded-mtext">Change password</span>
+          </a>
+        </li>
+        <li data-username="delete account" class="nav-item {% if 'delete_account' in segment %}active{% endif %}">
+          <a href="{{url_for('accounts.accounts_delete_account')}}" class="nav-link">
+              <span class="pcoded-micon"><i class="feather icon-trash-2"></i></span>
+              <span class="pcoded-mtext">Delete account</span>
+          </a>
+        </li>
+          </ul>
+        </li>
+        
+        <li data-username="Log out" class="nav-item {% if 'logout' in segment %}active{% endif %}">
+          <a href="{{url_for('accounts.accounts_logout')}}" class="nav-link">
+              <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
+              <span class="pcoded-mtext">Log Out</span>
+          </a>
+      </li>
+      </ul>
+    </div>
+  </div>
+</nav>

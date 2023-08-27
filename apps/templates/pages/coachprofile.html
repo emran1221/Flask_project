@@ -1,0 +1,66 @@
+{% extends 'layouts/base.html' %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+  <!-- [ Main Content ] start -->
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Edit Info</h4>
+        </div>
+        <div class="card-block">
+          <div class="row">
+            <div class="col-sm-12 mb-4">
+              <div class="form-group">
+                <label for="name"><strong>Name</strong></label>
+                <input type="text" class="form-control" id="name" aria-describedby="emailHelp"
+                  value="{{ coach.CoachName }}" disabled>
+              </div>
+            </div>
+            <div class="col-sm-12 mb-4">
+              <div class="form-group">
+                <label for="exampleInputEmail1"><strong>Email address</strong></label>
+                <input type="email" class="form-control" id="exampleInputEmail1"
+                  aria-describedby="emailHelp" value="{{ coach.CoachEmail }}" disabled>
+                <small id="emailHelp" class="form-text text-muted">Your email address.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-block">
+          <div class="d-flex align-items-center justify-content-center flex-column">
+            <div class="profile-img-container">
+              <img src="https://via.placeholder.com/150" alt="profile image" class="img-fluid rounded-circle">
+            </div>
+            <div class="text-center mt-3">
+              <h4 class="font-weight-bold">{{ coach.CoachName }}</h4>
+              <p class="font-italic text-muted">{{ coach.AboutInfo }}</p>
+            </div>
+          </div>
+          <hr>
+          <div class="coach-stats">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="stat">
+                  <h5 class="stat-label"><strong>Coach Code:</strong></h5><p class="stat-value">  {{ coach.CoachCode }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center social-icons mt-3">
+            <a href="#" class="social-icon"><i class="icon feather icon-facebook"></i></a>
+            <a href="#" class="social-icon"><i class="icon feather icon-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="icon feather icon-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- [ Main Content ] end -->
+{% endblock content %}
