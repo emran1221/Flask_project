@@ -123,7 +123,7 @@ def pages_coach_index():
 #player_details_coach
 @views.route('/pages/player_details_coach/<int:player_id>',methods=['GET', 'POST'])
 def pages_player_details_coach(player_id):
- if 'user_id' in session and session.get('user_type') == 'coach':
+    if 'user_id' in session and session.get('user_type') == 'coach':
         coach_id = session['user_id']
         coach = Coach.query.get(coach_id)
         player = Player.query.get(player_id)
@@ -141,10 +141,15 @@ def pages_player_details_coach(player_id):
         for day in days:
             workouts_for_day = player.get_workouts_for_day(day)
             player_workouts[day] = workouts_for_day
+
         return render_template('pages/player_details_coach.html',segment='index', parent='dashboard', coach=coach, player=player,player_workouts=player_workouts,all_workouts=all_workouts)
- else:
-        flash('Please log in as a coach.')
-        return redirect('/accounts/auth-signin/')
+
+            
+    else:
+            flash('Please log in as a coach.')
+            return redirect('/accounts/auth-signin/')
+    
+ 
 # End player_details_code
 
 
