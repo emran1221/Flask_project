@@ -76,7 +76,7 @@
                         <thead>
                             <tr>
                                 <th>Day</th>
-                                <th>Time</th>
+                                <th>Date</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -84,7 +84,7 @@
                             {% for workout in all_workouts %}
                             <tr>
                                 <td>{{ workout.date.strftime('%A') }}</td>
-                                <td>{{ workout.date.strftime('%x') }}</td>
+                                <td>{{ workout.date.strftime('%d/%m/%y') }}</td>
                                 <td>
                                     <span class="badge {% if workout.is_done %}badge-success{% else %}badge-danger{% endif %}">
                                         {{ "Done" if workout.is_done else "Not Done" }}

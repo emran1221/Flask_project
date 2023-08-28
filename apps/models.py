@@ -2,7 +2,7 @@ from sqlalchemy import func
 from . import db  
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 
 
@@ -72,26 +72,27 @@ class Player(UserMixin,db.Model):
     def get_upcoming_workouts(self):
         workout_group = self.Workout_code
        
-        today = datetime.now()
-        days_ahead = (0 - today.weekday()) % 7  # Days until next Monday
-        next_monday = today + timedelta(days=days_ahead)
+        #days_ahead = (0 - today.weekday()) % 7  # Days until next Monday
+        #next_monday = today + timedelta(days=days_ahead)
+        today = date.today()  # Get today's date without the time
 
         # Get the closest upcoming workout date from PlayerWorkoutLog
         closest_workout_date = db.session.query(func.min(PlayerWorkoutLog.date)).filter(PlayerWorkoutLog.date >= today).scalar()
 
+        print(closest_workout_date)
         if closest_workout_date:
             # Calculate the corresponding day for the closest workout date
             next_workout_day = closest_workout_date.strftime('%A')
         else:
             next_workout_day = None
 
-
-
+        print(next_workout_day)
         upcoming_workouts = PlayerWorkout.query.join(WorkoutRoutine).filter(
             PlayerWorkout.player_id == self.PlayerID,
             WorkoutRoutine.day == next_workout_day,
             WorkoutRoutine.workout_group == workout_group
         ).all()
+        
         return upcoming_workouts
     
     @property

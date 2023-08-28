@@ -7,6 +7,7 @@ Copyright (c) 2019 - present AppSeed.us
 from flask   import render_template, request, redirect,flash,session,url_for,Blueprint
 from jinja2  import TemplateNotFound
 from flask_login import login_user, login_required, current_user, logout_user
+from sqlalchemy import func
 
 # App modules
 from . import db  # Import the db object from the current package
@@ -50,40 +51,6 @@ def index():
                 flash('Joined coach successfully!')
                 return redirect('/') 
               
-
-            all_my_workouts = PlayerWorkoutLog.query.filter_by(player_id=player_id).all()
-            # Get the current day of the week (0 = Monday, 6 = Sunday)
-            current_day_of_week = datetime.today().weekday()
-            
-            # Define a dictionary to map day indices to workout days
-            
-            workout_days = {
-                0: 'Monday',
-                2: 'Wednesday',
-                4: 'Friday'
-            }
-            
-            # Calculate the next workout day
-            next_workout_day_index = (current_day_of_week + 1) % 7
-            while next_workout_day_index not in workout_days:
-                next_workout_day_index = (next_workout_day_index + 1) % 7
-            next_workout_day = workout_days[next_workout_day_index]
-            
-            # Get upcoming workouts
-            workouts = player.get_upcoming_workouts()
-            coach = Coach.query.filter_by(CoachCode=player.CoachCode).first()
-            
-            # Calculate if workouts are available and completed for today
-            current_day = datetime.today().strftime('%A')
-            
-            # Get the player's workout logs for today
-            workout_logs_today = PlayerWorkoutLog.query.filter_by(player_id=player.PlayerID, date=date.today()).all()
-            
-            workouts_available = any(
-                workout_log.workout_routine.day == current_day for workout_log in workout_logs_today
-            )
-            workouts_completed = all(workout_log.is_done for workout_log in workout_logs_today)
-
             if 'mark_day_done' in request.form:
                 # Mark today's workouts as done
                 if 'user_id' in session:
@@ -96,8 +63,42 @@ def index():
                     db.session.commit()
                     flash("Today's workouts marked as done!")
 
+            all_my_workouts = PlayerWorkoutLog.query.filter_by(player_id=player_id).all()
+            
+            # Calculate the next workout day
+            today = date.today()  # Get today's date without the time
 
-            return render_template( 'pages/index.html', segment='index', parent='dashboard',player=player, coach=coach,workouts=workouts, day=next_workout_day,workouts_available=workouts_available,workouts_completed=workouts_completed,all_my_workouts=all_my_workouts)
+            # Get the closest upcoming workout date from PlayerWorkoutLog
+            closest_workout_date = db.session.query(func.min(PlayerWorkoutLog.date)).filter(PlayerWorkoutLog.date >= today).scalar()
+
+            print(closest_workout_date)
+            if closest_workout_date:
+                # Calculate the corresponding day for the closest workout date
+                next_workout_day = closest_workout_date.strftime('%A')
+            else:
+                next_workout_day = None
+
+
+            
+            # Get upcoming workouts
+            workouts = player.get_upcoming_workouts()
+            coach = Coach.query.filter_by(CoachCode=player.CoachCode).first()
+            
+            # Calculate if workouts are available and completed for today
+            # Get the player's workout logs for today
+            workout_logs_today = PlayerWorkoutLog.query.filter_by(player_id=player.PlayerID, date=today).all()
+            
+            workouts_available = any(
+                workout_log.date == today for workout_log in workout_logs_today
+            ) 
+            print("Workouts available:", workouts_available)
+
+            workouts_completed = all(workout_log.is_done for workout_log in workout_logs_today)
+
+            
+
+
+            return render_template( 'pages/index.html', segment='index', parent='dashboard',player=player, coach=coach,workouts=workouts, day=next_workout_day,workouts_available=workouts_available, workouts_completed=workouts_completed,all_my_workouts=all_my_workouts)
             
         else:
             return "Unauthorized", 401
@@ -136,9 +137,10 @@ def pages_player_details_coach(player_id):
             db.session.commit()
             return redirect('/pages/coachindex/')
         days = ['Monday', 'Wednesday', 'Friday']
-        player_workouts = {}
+        player_workouts = {day: [] for day in days}
         for day in days:
-            player_workouts[day] = player.get_upcoming_workouts()
+            workouts_for_day = player.get_workouts_for_day(day)
+            player_workouts[day] = workouts_for_day
         return render_template('pages/player_details_coach.html',segment='index', parent='dashboard', coach=coach, player=player,player_workouts=player_workouts,all_workouts=all_workouts)
  else:
         flash('Please log in as a coach.')
@@ -202,10 +204,16 @@ def pages_player_form():
         
         if request.method == 'POST':
             existing_workouts = PlayerWorkout.query.filter_by(player_id=player.PlayerID).all()
+            all_my_workouts = PlayerWorkoutLog.query.filter_by(player_id=player_id).all()
+
             if existing_workouts:
             # Delete the existing personalized workout
                 for existing_workout in existing_workouts:
                     db.session.delete(existing_workout)   
+                    db.session.commit()
+                
+                for myworkout in all_my_workouts:
+                    db.session.delete(myworkout)
                     db.session.commit()
             position = request.form['position']
             finishing = int(request.form['finishing'])
@@ -293,8 +301,10 @@ def pages_player_form():
         
             db.session.commit()
             # Calculate the next Monday from today
-            today = datetime.now()
-            days_ahead = (0 - today.weekday()) % 7  # Days until next Monday
+            today = date.today()  # Get today's date without the time
+
+            # Calculate the next Monday from today
+            days_ahead = (0 - today.weekday()) % 7
             next_monday = today + timedelta(days=days_ahead)
 
             # Define the mapping from string days to integer days (0=Monday, 1=Tuesday, etc.)
@@ -318,7 +328,7 @@ def pages_player_form():
                     player_workout_log = PlayerWorkoutLog(
                         player_id=player.PlayerID,
                         workout_routine_id=workout_routine.id,
-                        date=workout_date.date(),
+                        date=workout_date,
                         is_done=False  # Workouts are initially not done
                     )
                     db.session.add(player_workout_log)
@@ -330,7 +340,7 @@ def pages_player_form():
             flash('Profile details updated successfully!')
 
             return redirect('/')
-    return render_template('pages/player_form.html', segment='form_elements', parent='form_components', player = player)
+    return render_template('pages/player_form.html', segment='form_elements', player = player)
 
 @views.route('/pages/match_statistics/' , methods=['GET', 'POST'])
 def pages_match_statistics():
@@ -350,7 +360,7 @@ def pages_match_statistics():
                return render_template( 'pages/match_statistics.html', segment='match_statistics', parent='form_components',player=player)
 
 
-    return render_template('pages/match_statistics.html', segment='match_statistics', parent='form_components' ,player=player)
+    return render_template('pages/match_statistics.html', segment='match_statistics',player=player)
 
 
 
