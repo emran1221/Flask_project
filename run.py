@@ -30,7 +30,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         app.run(host='0.0.0.0', port=5000)
-<<<<<<< HEAD
-    
-=======
->>>>>>> fc44b7db068a65753f203b04cacf8f30b7cf1c82
+
